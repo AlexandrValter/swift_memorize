@@ -8,33 +8,77 @@
 import SwiftUI
 
 struct ContentView: View {
+    let emojis = ["👽","🐙","🐳","🦀","🐻","🐰","🐝","🦋","🐌","🐫","🐕","🐈"]
+    
+    @State var cardCount = 4
+    
     var body: some View {
-        HStack {
-            CardView(isFaceUp: true)
-            CardView()
-            CardView()
-            CardView()
+        VStack(spacing: 20) {
+            ScrollView{
+                cards
+            }
+            Spacer()
+            cardCountAdjusters
         }
-        .foregroundColor(.blue)
+    }
+    
+    var cards: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
+            ForEach(0..<cardCount, id: \.self) { index in
+                CardView(content: emojis[index])
+                    .aspectRatio(2/3, contentMode: .fit)
+            }
+        }
+        .foregroundColor(.green)
         .padding()
+    }
+    
+    var cardCountAdjusters: some View {
+        HStack {
+            cardRemover
+            Spacer()
+            cardAdder
+        }
+        .padding([.horizontal], 50)
+        .imageScale(.large)
+        .font(.largeTitle)
+    }
+    
+    func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
+        Button(
+            action: { cardCount += offset },
+            label: { Image(systemName: symbol)}
+        )
+        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
+    }
+    
+    var cardRemover: some View {
+        cardCountAdjuster(by: -1, symbol: "rectangle.fill.badge.minus")
+    }
+    
+    var cardAdder: some View {
+        cardCountAdjuster(by: 1, symbol: "rectangle.fill.badge.plus")
     }
 }
 
 struct CardView: View {
-    var isFaceUp: Bool = false
+    let content: String
+    @State var isFaceUp = false
     
     var body: some View {
-        ZStack() {
-            if isFaceUp {
-                RoundedRectangle(cornerRadius: 24)
-                    .foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 24)
-                    .strokeBorder(lineWidth: 8)
-                Text("👽")
+        ZStack {
+            let base = RoundedRectangle(cornerRadius: 24)
+            Group {
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 8)
+                Text(content)
                     .font(.largeTitle)
-            } else {
-                RoundedRectangle(cornerRadius: 24)
+                    .padding()
             }
+            .opacity(isFaceUp ? 1 : 0)
+            base.opacity(isFaceUp ? 0 : 1)
+        }.onTapGesture {
+            isFaceUp.toggle()
         }
     }
 }
