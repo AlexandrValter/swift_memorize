@@ -8,56 +8,62 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis = ["👽","🐙","🐳","🦀","🐻","🐰","🐝","🦋","🐌","🐫","🐕","🐈"]
+    let seaCreatures = ["🦑","🐙","🐳","🦀","🪼","🐡","🐠","🐬","🦞","🐟","🦈","🦐"]
+    let insects = ["🐝","🐛","🦋","🐞","🐜","🪰","🪲","🪳","🦟","🦗","🕷️","🦂"]
+    let animals = ["🐶","🐵","🐷","🐹","🐰","🦊","🐻","🐼","🐮","🐨","🐯","🦁"]
     
-    @State var cardCount = 4
+    @State var emojis: Array<String> = []
     
     var body: some View {
         VStack(spacing: 20) {
-            ScrollView{
+            appTitle
+            ScrollView {
                 cards
             }
-            Spacer()
-            cardCountAdjusters
+            themesCustomizers
         }
     }
     
+    var appTitle: some View {
+        Text("Memorize!")
+            .font(.largeTitle)
+            .foregroundColor(.green)
+            .fontWeight(.bold)
+            
+    }
+    
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))]) {
-            ForEach(0..<cardCount, id: \.self) { index in
-                CardView(content: emojis[index])
-                    .aspectRatio(2/3, contentMode: .fit)
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))]) {
+            if !emojis.isEmpty {
+                ForEach(0..<emojis.count, id: \.self) { index in
+                    CardView(content: emojis[index])
+                        .aspectRatio(2/3, contentMode: .fit)
+                }
             }
         }
         .foregroundColor(.green)
         .padding()
     }
     
-    var cardCountAdjusters: some View {
-        HStack {
-            cardRemover
-            Spacer()
-            cardAdder
+    func themeSelectorButton(_ theme: Array<String>, icon: String, button title: String) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.title)
+            Text(title)
+                .font(.subheadline)
         }
-        .padding([.horizontal], 50)
-        .imageScale(.large)
-        .font(.largeTitle)
+        .foregroundStyle(.blue)
+        .onTapGesture { emojis = (theme + theme).shuffled() }
+        .frame(maxWidth: .infinity)
     }
     
-    func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
-        Button(
-            action: { cardCount += offset },
-            label: { Image(systemName: symbol)}
-        )
-        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
-    }
-    
-    var cardRemover: some View {
-        cardCountAdjuster(by: -1, symbol: "rectangle.fill.badge.minus")
-    }
-    
-    var cardAdder: some View {
-        cardCountAdjuster(by: 1, symbol: "rectangle.fill.badge.plus")
+    var themesCustomizers: some View {
+        HStack {
+            themeSelectorButton(seaCreatures, icon: "fish", button: "Sea creatures")
+            themeSelectorButton(insects, icon: "ant", button: "Insects")
+            themeSelectorButton(animals, icon: "dog", button: "Animals")
+        }
+        .padding([.horizontal], 30)
     }
 }
 
