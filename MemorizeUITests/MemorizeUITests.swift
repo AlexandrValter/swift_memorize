@@ -2,7 +2,7 @@
 //  MemorizeUITests.swift
 //  MemorizeUITests
 //
-//  Created by Александр Вальтер on 24.04.2025.
+//  Created by Aleksandr Valter on 24.04.2025.
 //
 
 import XCTest
