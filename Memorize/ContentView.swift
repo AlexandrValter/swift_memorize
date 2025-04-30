@@ -13,6 +13,7 @@ struct ContentView: View {
     let animals = ["🐶","🐵","🐷","🐹","🐰","🦊","🐻","🐼","🐮","🐨","🐯","🦁"]
     
     @State var emojis: Array<String> = []
+    @State var color: Color?
     
     var body: some View {
         VStack(spacing: 20) {
@@ -27,7 +28,7 @@ struct ContentView: View {
     var appTitle: some View {
         Text("Memorize!")
             .font(.largeTitle)
-            .foregroundColor(.green)
+            .foregroundColor(color ?? .black)
             .fontWeight(.bold)
             
     }
@@ -41,11 +42,11 @@ struct ContentView: View {
                 }
             }
         }
-        .foregroundColor(.green)
+        .foregroundColor(color)
         .padding()
     }
     
-    func themeSelectorButton(_ theme: Array<String>, icon: String, button title: String) -> some View {
+    func themeSelectorButton(_ theme: Array<String>, icon: String, button title: String, color: Color) -> some View {
         VStack(spacing: 10) {
             Image(systemName: icon)
                 .font(.title)
@@ -53,15 +54,18 @@ struct ContentView: View {
                 .font(.subheadline)
         }
         .foregroundStyle(.blue)
-        .onTapGesture { emojis = (theme + theme).shuffled() }
+        .onTapGesture {
+            emojis = (theme + theme).shuffled()
+            self.color = color
+        }
         .frame(maxWidth: .infinity)
     }
     
     var themesCustomizers: some View {
         HStack {
-            themeSelectorButton(seaCreatures, icon: "fish", button: "Sea creatures")
-            themeSelectorButton(insects, icon: "ant", button: "Insects")
-            themeSelectorButton(animals, icon: "dog", button: "Animals")
+            themeSelectorButton(seaCreatures, icon: "fish", button: "Sea creatures", color: .blue)
+            themeSelectorButton(insects, icon: "ant", button: "Insects", color: .green)
+            themeSelectorButton(animals, icon: "dog", button: "Animals", color: .orange)
         }
         .padding([.horizontal], 30)
     }
